@@ -6,10 +6,7 @@ import os
 import sys
 import tarfile
 import subprocess
-#import getpass
-#from crontab import CronTab
 from datetime import timedelta
-#from incremental_backups_tools import full_backup, incremental_backup, restore_backup
 
 # Global variables
 sourcefile = "/home/"
@@ -78,30 +75,12 @@ def create_log_entry(data):
 	file.write(data + "\n")
 	file.close()
 
-#def set_cronjob():
-#	list = cron.find_command('*/'+script_name)
-#	if list is not None:
-#		job = cron.new(command=script_location)
-#		job.hour.on(1)
-#
-##		if job.is_valid():
-#			job.enable()
-#			print "New crontab entry is set"
-#		else:
-#			print "ERROR: Failed to set cronjob!"
-#			print_and_log("ERROR: Failed to set cronjob!")	
-#	else:
-#		print "Cronjob is already set"
-
 def print_and_log(message):
 	f = str(message)
 	print f
 	create_log_entry(f)	
 
 #Start of the script
-#Making sure the script is ran as root
-run_as_root()
-
 print " _______________________________"
 print "| Linux Server Security		|"
 print "| Linux Backup Script		|"
@@ -110,9 +89,6 @@ print "| 3 CCCP		        |"
 print "|_______________________________|"
 
 print_and_log("Starting backup script at " + timestamp)
-#Enabling crontab
-#cron = CronTab()
-#set_cronjob()
 
 #Creating a log from the files that have to be backed up
 dirlist = create_dirlist(sourcefile)
