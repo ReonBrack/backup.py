@@ -18,32 +18,26 @@ logfile = ""
 cron = ""
 
 # Functions
-def run_as_root():
-	euid = os.geteuid()
-	if euid is not 0:
-		print "Script has to be ran as root. Running sudo..."
-		args = ['sudo', sys.executable] + sys.argv + [os.environ]
-		os.execlpe('sudo', *args)
-		print "Script is continuing as root"
-
 def do_backup():
 	if check_last_backup():
-		create_tarfile(sourcefile, backupfile)
+		print_and_log("Yesterday's backup found")
+		print_and_log("Starting basic backup")
+		basic_backup(sourcefile, backupfile)
 	else:
+		print_and_log("Yesterday's backup NOT found")
 		incremental_backup(sourcefile, backupfile)
 
 def incremental_backup(in, out):
-	subprocess.call(["rsync", "-a "+in , "--force", "--backup", "--backup-dir="+out])
-	
+	print_and_log("Staring incremental backup")
+	subprocess.call(["rsync", "-a "+in , "--force", "--backup", "--backup-dir="+out])	
 
 def check_last_backup():
 	dir = os.listdir(backupfile)
 	if any(timestamp+".tar.gz" in tar for tar in dir):
-		return True
-	
+		return True	
 	return False
 
-def create_tarfile(input, output):
+def basic_backup(input, output):
 	print_and_log("Backing up " + input + " to " + output)
 
 	if not os.path.isdir(output):
