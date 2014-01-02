@@ -6,6 +6,7 @@ import os
 import sys
 import tarfile
 import subprocess
+import hashlib
 from datetime import timedelta
 
 # Global variables
@@ -28,7 +29,6 @@ def prepare():
 	check_sudo()
 	if not os.path.isdir(backupfile):		
 		os.makedirs(backupfile)
-		print 'Created /backup/...'
 
 def check_sudo():
 	if os.getuid() != 0:
@@ -75,12 +75,22 @@ def check_last_backup():
 		return True	
 	return False
 
+def generate_hash(file):
+	BLOCKSIZE = 65536
+	hasher = hashlib.md5()
+	with open(file, 'rb') as afile:
+		buf = afile.read(BLOCKSIZE)
+		while len(buf) > 0:
+			hasher.update(buf)
+			buf = afile.read(BLOCKSIZE)
+	return hasher.hexdigest()
+	
 def create_dirlist(directory):
-	tree = ""
+	masterlist = ""
 	for path, dirs, files in os.walk(directory):
-		tree += path + "\n"
 		for file in files:
-			tree += os.path.join(path, file) + "\n"
+			masterlist += 'PATH:{} DATE:{} MD5{}'.format((os.path.join(path, file)), 
+			str(datetime.datetime.now()), 
 	return str(tree)
 
 def print_and_log(message):
